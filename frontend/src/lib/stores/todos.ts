@@ -1,6 +1,38 @@
+import { browser } from '$app/environment';
 import type { Todo, TodoFilter } from '$lib/types/todo';
 
-export const todos = $state<Todo[]>([]);
+const STORAGE_KEY = 'todos';
+
+function loadTodosFromStorage(): Todo[] {
+	if (!browser) return [];
+
+	try {
+		const stored = localStorage.getItem(STORAGE_KEY);
+		if (!stored) return [];
+
+		const parsed = JSON.parse(stored);
+		return parsed.map((t: any) => ({
+			...t,
+			createdAt: new Date(t.createdAt),
+			dueDate: t.dueDate ? new Date(t.dueDate) : undefined
+		}));
+	} catch (error) {
+		console.error('Failed to load todos from localStorage:', error);
+		return [];
+	}
+}
+
+function saveTodosToStorage(items: Todo[]): void {
+	if (!browser) return;
+
+	try {
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+	} catch (error) {
+		console.error('Failed to save todos to localStorage:', error);
+	}
+}
+
+export const todos = $state<Todo[]>(loadTodosFromStorage());
 
 export let currentFilter = $state<TodoFilter>('all');
 
@@ -21,6 +53,10 @@ export const activeCount = $derived<number>(todos.filter((todo) => !todo.complet
 export const completedCount = $derived<number>(todos.filter((todo) => todo.completed).length);
 
 export const totalCount = $derived(todos.length);
+
+$effect(() => {
+	saveTodosToStorage(todos);
+});
 
 export function addTodo(text: string): void {
 	if (!text.trim()) return;
