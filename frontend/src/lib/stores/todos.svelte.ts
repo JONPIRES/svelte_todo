@@ -22,15 +22,6 @@ function loadTodosFromStorage(): Todo[] {
 	}
 }
 
-function saveTodosToStorage(items: Todo[]): void {
-	if (!browser) return;
-
-	try {
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-	} catch (error) {
-		console.error('Failed to save todos to localStorage:', error);
-	}
-}
 
 export const todos = $state<Todo[]>(loadTodosFromStorage());
 

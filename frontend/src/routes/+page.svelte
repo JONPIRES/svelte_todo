@@ -1,7 +1,7 @@
 <script lang="ts">
 	import TodoForm from '$lib/components/TodoForm.svelte';
 	import TodoList from '$lib/components/TodoList.svelte';
-	import { todos } from '$lib/stores/todos.svelte.ts';
+	import { todos } from '$lib/stores/todos.svelte';
 	import { browser } from '$app/environment';
 
 	const STORAGE_KEY = 'todos';
