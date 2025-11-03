@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addTodo } from '$lib/stores/todos';
+	import { addTodo } from '$lib/stores/todos.svelte.ts';
 
 	let inputRef: HTMLInputElement;
 	let text = $state('');
@@ -22,15 +22,17 @@
 </script>
 
 <form
-	on:submit|preventDefault={handleSubmit}
+	onsubmit={(e) => {
+		e.preventDefault();
+		handleSubmit();
+	}}
 	class="flex gap-2 w-full"
-	role="form"
 	aria-label="Add new todo"
 >
 	<input
 		bind:this={inputRef}
 		bind:value={text}
-		on:keydown={handleKeydown}
+		onkeydown={handleKeydown}
 		type="text"
 		placeholder="What needs to be done?"
 		class="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"

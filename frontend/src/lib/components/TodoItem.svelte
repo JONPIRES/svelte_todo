@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Todo } from '$lib/types/todo';
-	import { toggleTodo, deleteTodo, updateTodo } from '$lib/stores/todos';
+	import { toggleTodo, deleteTodo, updateTodo } from '$lib/stores/todos.svelte.ts';
 
 	interface Props {
 		todo: Todo;
@@ -10,12 +10,16 @@
 
 	let isEditing = $state(false);
 	let editText = $state('');
-	let inputRef: HTMLInputElement;
+	let inputRef = $state<HTMLInputElement | undefined>(undefined);
 
 	function startEdit() {
 		isEditing = true;
 		editText = todo.text;
-		setTimeout(() => inputRef?.focus(), 0);
+		setTimeout(() => {
+			if (inputRef) {
+				inputRef.focus();
+			}
+		}, 0);
 	}
 
 	function saveEdit() {
@@ -60,8 +64,8 @@
 		<input
 			bind:this={inputRef}
 			bind:value={editText}
-			on:keydown={handleKeydown}
-			on:blur={saveEdit}
+			onkeydown={handleKeydown}
+			onblur={saveEdit}
 			type="text"
 			class="flex-1 px-2 py-1 border border-blue-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
 			aria-label="Edit todo text"

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import TodoItem from './TodoItem.svelte';
-	import { filteredTodos, currentFilter, setFilter, totalCount, activeCount, completedCount } from '$lib/stores/todos';
+	import { filteredTodos, currentFilter, setFilter, totalCount, activeCount, completedCount } from '$lib/stores/todos.svelte.ts';
 	import type { TodoFilter } from '$lib/types/todo';
 
 	const filters: { label: string; value: TodoFilter; count?: number }[] = [
@@ -12,28 +12,28 @@
 	function getFilterCount(filter: TodoFilter): number {
 		switch (filter) {
 			case 'all':
-				return totalCount;
+				return totalCount();
 			case 'active':
-				return activeCount;
+				return activeCount();
 			case 'completed':
-				return completedCount;
+				return completedCount();
 		}
 	}
 </script>
 
 <div class="flex flex-col gap-4">
-	{#if totalCount > 0}
+	{#if totalCount() > 0}
 		<div class="flex gap-2 overflow-x-auto pb-2">
 			{#each filters as filter}
 				<button
 					type="button"
 					onclick={() => setFilter(filter.value)}
-					class:bg-blue-500={currentFilter === filter.value}
-					class:text-white={currentFilter === filter.value}
-					class:bg-gray-100={currentFilter !== filter.value}
-					class:text-gray-700={currentFilter !== filter.value}
+					class:bg-blue-500={currentFilter() === filter.value}
+					class:text-white={currentFilter() === filter.value}
+					class:bg-gray-100={currentFilter() !== filter.value}
+					class:text-gray-700={currentFilter() !== filter.value}
 					class="px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap min-w-[80px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-					aria-pressed={currentFilter === filter.value}
+					aria-pressed={currentFilter() === filter.value}
 					aria-label="{filter.label} todos"
 				>
 					{filter.label}
@@ -42,15 +42,15 @@
 			{/each}
 		</div>
 
-		{#if filteredTodos.length > 0}
+		{#if filteredTodos().length > 0}
 			<ul class="divide-y divide-gray-200 rounded-lg border border-gray-200 overflow-hidden">
-				{#each filteredTodos as todo (todo.id)}
+				{#each filteredTodos() as todo (todo.id)}
 					<TodoItem {todo} />
 				{/each}
 			</ul>
 		{:else}
 			<div class="text-center py-12 px-4 text-gray-500">
-				<p class="text-lg font-medium">No {currentFilter} todos</p>
+				<p class="text-lg font-medium">No {currentFilter()} todos</p>
 				<p class="text-sm mt-2">Try a different filter or add a new todo</p>
 			</div>
 		{/if}

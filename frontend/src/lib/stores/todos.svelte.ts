@@ -34,10 +34,11 @@ function saveTodosToStorage(items: Todo[]): void {
 
 export const todos = $state<Todo[]>(loadTodosFromStorage());
 
-export let currentFilter = $state<TodoFilter>('all');
+export const filterState = $state({ value: 'all' as TodoFilter });
+export const currentFilter = () => filterState.value;
 
-export const filteredTodos = $derived.by<Todo[]>(() => {
-	switch (currentFilter) {
+const _filteredTodos = $derived.by<Todo[]>(() => {
+	switch (filterState.value) {
 		case 'active':
 			return todos.filter((todo) => !todo.completed);
 		case 'completed':
@@ -47,16 +48,16 @@ export const filteredTodos = $derived.by<Todo[]>(() => {
 			return todos;
 	}
 });
+export const filteredTodos = () => _filteredTodos;
 
-export const activeCount = $derived<number>(todos.filter((todo) => !todo.completed).length);
+const _activeCount = $derived<number>(todos.filter((todo) => !todo.completed).length);
+export const activeCount = () => _activeCount;
 
-export const completedCount = $derived<number>(todos.filter((todo) => todo.completed).length);
+const _completedCount = $derived<number>(todos.filter((todo) => todo.completed).length);
+export const completedCount = () => _completedCount;
 
-export const totalCount = $derived(todos.length);
-
-$effect(() => {
-	saveTodosToStorage(todos);
-});
+const _totalCount = $derived(todos.length);
+export const totalCount = () => _totalCount;
 
 export function addTodo(text: string): void {
 	if (!text.trim()) return;
@@ -93,7 +94,7 @@ export function updateTodo(id: string, text: string): void {
 }
 
 export function setFilter(filter: TodoFilter): void {
-	currentFilter = filter;
+	filterState.value = filter;
 }
 
 export function clearCompleted(): void {

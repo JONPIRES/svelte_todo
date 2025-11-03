@@ -1,6 +1,24 @@
 <script lang="ts">
 	import TodoForm from '$lib/components/TodoForm.svelte';
 	import TodoList from '$lib/components/TodoList.svelte';
+	import { todos } from '$lib/stores/todos.svelte.ts';
+	import { browser } from '$app/environment';
+
+	const STORAGE_KEY = 'todos';
+
+	function saveTodosToStorage(items: typeof todos): void {
+		if (!browser) return;
+
+		try {
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+		} catch (error) {
+			console.error('Failed to save todos to localStorage:', error);
+		}
+	}
+
+	$effect(() => {
+		saveTodosToStorage(todos);
+	});
 </script>
 
 <div class="min-h-screen bg-gray-50 py-8 px-4">
