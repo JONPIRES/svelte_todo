@@ -23,7 +23,22 @@
 
 <div class="flex flex-col gap-4">
 	{#if totalCount() > 0}
-		<div class="flex gap-2 overflow-x-auto pb-2">
+		<!-- Select dropdown for small screens (mobile) -->
+		<select
+			value={currentFilter()}
+			onchange={(e) => setFilter(e.currentTarget.value as TodoFilter)}
+			class="block md:hidden w-full px-4 py-2 rounded-lg border border-gray-300 bg-white text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+			aria-label="Filter todos"
+		>
+			{#each filters as filter}
+				<option value={filter.value}>
+					{filter.label} ({getFilterCount(filter.value)})
+				</option>
+			{/each}
+		</select>
+
+		<!-- Button group for larger screens (tablet and up) -->
+		<div class="hidden md:flex gap-2 pb-2">
 			{#each filters as filter}
 				<button
 					type="button"
@@ -32,7 +47,7 @@
 					class:text-white={currentFilter() === filter.value}
 					class:bg-gray-100={currentFilter() !== filter.value}
 					class:text-gray-700={currentFilter() !== filter.value}
-					class="px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap min-w-[80px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+					class="px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
 					aria-pressed={currentFilter() === filter.value}
 					aria-label="{filter.label} todos"
 				>
